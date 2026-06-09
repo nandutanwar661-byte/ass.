@@ -29,10 +29,11 @@ router.post('/add', upload.single('image'), async (req, res) => {
     parsedBody.sellingPrice = parsedBody.sellingPrice ? Number(parsedBody.sellingPrice) : 0;
     parsedBody.costPrice = parsedBody.costPrice ? Number(parsedBody.costPrice) : 0;
 
-    // Agar image upload hui hai toh uska local static link add karein
+    // Agar image upload hui hai toh uska dynamic static link add karein
     if (req.file) {
-      // Live Render link ko hatakar local environment path set kiya hai
-      parsedBody.imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      // Dynamic host url nikalna (Local pe localhost aur Render pe Render ki link)
+      const hostUrl = `${req.protocol}://${req.get('host')}`;
+      parsedBody.imageUrl = `${hostUrl}/uploads/${req.file.filename}`;
     }
 
     const newItem = new Item(parsedBody);

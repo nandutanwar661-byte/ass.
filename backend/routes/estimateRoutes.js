@@ -22,8 +22,9 @@ router.post('/add', upload.single('itemImage'), async (req, res) => {
 
     // Attach uploaded item product preview image path if available
     if (req.file && rawData.items && rawData.items.length > 0) {
-      // Live Render link ko hatakar local environment path set kiya hai
-      rawData.items[0].itemImageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      // Dynamic link generation (Localhost ho ya Render, dono handle karega)
+      const hostUrl = `${req.protocol}://${req.get('host')}`;
+      rawData.items[0].itemImageUrl = `${hostUrl}/uploads/${req.file.filename}`;
     }
 
     const newEstimate = new Estimate(rawData);

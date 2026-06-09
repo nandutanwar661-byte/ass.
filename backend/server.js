@@ -14,7 +14,7 @@ connectDB();
 const allowedOrigins = [
   'http://localhost:5173', 
   'http://localhost:3000',
-  'https://vercel.app' // 👈 Add your exact Vercel live frontend URL here
+  'https://your-vercel-project-name.vercel.app' // 👈 Apne actual Vercel domain ko yahan copy-paste karein
 ];
 
 
