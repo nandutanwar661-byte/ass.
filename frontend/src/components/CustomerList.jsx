@@ -4,21 +4,24 @@ const CustomerList = ({ onAddNewCustomerClick, onEditCustomerClick, refreshTrigg
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchCustomers = async () => {
-    try {
+ const fetchCustomers = async () => {
+  try {
+    setLoading(true); // Fetch shuru hone par loading true karein
+    
+    // Sahi URL jisme /all juda hua hai
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
+    const res = await fetch(`${baseUrl}/api/customers/all`); // 👈 Yahan /all lagaya hai
 
-     // सही तरीका: Environment Variable का उपयोग करके यूआरएल बनाना
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
-      const res = await fetch(`${baseUrl}/api/customers`);
-
-      const data = await res.json();
-      setCustomers(data);
-    } catch (err) {
-      console.error("Error fetching customers:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = await res.json();
+    
+    // Agar data array ke roop me seedhe mil raha hai toh set karein
+    setCustomers(data);
+  } catch (err) {
+    console.error("Error fetching customers:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchCustomers();

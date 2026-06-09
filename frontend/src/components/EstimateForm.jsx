@@ -87,25 +87,29 @@ const EstimateInvoiceForm = ({ refreshDashboard, editData, onCancelEdit }) => {
     if (items.length > 1) setItems(items.filter(item => item.id !== id));
   };
 
-   const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const finalPayload = { ...formData, items };
       
-      // Fallback directly to your live Render link if environment variable isn't set
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://onrender.com';
+      // FIXED: Aapki exact Render link ko default fallback banaya
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
       
-      const response = await fetch(`${baseUrl}/api/estimates`, {
+      // FIXED: Endpoint ke aakhiri me '/add' jod diya hai jo aapke backend route se match karta hai
+      const response = await fetch(`${baseUrl}/api/estimates/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finalPayload)
       });
 
-      if (response.ok) {
-        alert('Data saved successfully to your live server!');
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert('🎉 Data saved successfully to your live server!');
         if (refreshDashboard) refreshDashboard();
+        if (onCancelEdit) onCancelEdit(); // form close karne ke liye
       } else {
-        alert('Failed to save data. Check your backend endpoints.');
+        alert(`⚠️ Error: ${result.message || 'Failed to save data.'}`);
       }
     } catch (error) {
       console.error("API Connection Error:", error);

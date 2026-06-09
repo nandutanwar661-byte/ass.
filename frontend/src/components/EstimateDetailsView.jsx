@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
-const EstimateDetailsView = ({ onAddNewClick, onEditClick }) => {
+const EstimateDetailsView = ({ onAddNewClick, onEditClick, refreshTrigger }) => {
   const [estimates, setEstimates] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('VITE_API_BASE_URL=https://ass-1-saa5.onrender.com/api/estimates/all')
+    // Sahi Tarika: URL ko template literal me environment variable ke sath set kiya
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
+    
+    fetch(`${baseUrl}/api/estimates/all`)
       .then(res => res.json())
       .then(result => { 
         if (result.success) setEstimates(result.data); 
       })
-      .catch(err => console.error(err))
+      .catch(err => console.error("Error fetching estimates:", err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshTrigger]); // refreshTrigger add kiya taaki data add hone ke baad list auto-refresh ho
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto text-sm text-[#333333] font-sans antialiased">
@@ -93,7 +96,7 @@ const EstimateDetailsView = ({ onAddNewClick, onEditClick }) => {
               {/* Action Node Hub */}
               <div className="flex items-center gap-1 border-l border-gray-100 pl-4 self-stretch my-1">
                  <button
-                    onClick={() => onEditClick(inv)}
+                    onClick={() => onEditClick(est)} // 👈 FIXED: 'inv' ko badal kar 'est' kiya
                     className="text-xs border border-gray-300 hover:border-blue-500 bg-gray-50 text-gray-600 hover:text-blue-600 font-bold px-3 py-1.5 rounded-lg shadow-3xs cursor-pointer transition"
                   >
                     📝 Edit Estimate
