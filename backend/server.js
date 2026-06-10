@@ -11,10 +11,8 @@ const app = express();
 // Database Connection call
 connectDB();
 
-const allowedOrigins = [
-  'http://localhost:5173', 
-  'http://localhost:3000',
-  '// Server.js me allowedOrigins array ko aise update karein:
+
+// Server.js me allowedOrigins array ko aise update karein:
 const allowedOrigins = [
   'http://localhost:5173', 
   'http://localhost:3000',
@@ -32,8 +30,7 @@ app.use(cors({
         return callback(null, true);
     },
     credentials: true
-}));' // 👈 Apne actual Vercel domain ko yahan copy-paste karein
-];
+}));
 
 
 app.use(cors({
