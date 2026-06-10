@@ -3,7 +3,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 require('dotenv').config();
 const dns = require("dns");
-// Change DNS
+
+// Change DNS setup for network stability on cloud services
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
@@ -11,31 +12,17 @@ const app = express();
 // Database Connection call
 connectDB();
 
-
-// Server.js me allowedOrigins array ko aise update karein:
+// Sahi allowedOrigins jisme aapka live Vercel link added hai
 const allowedOrigins = [
   'http://localhost:5173', 
   'http://localhost:3000',
-  'https://zohobooks-amber.vercel.app' // 👈 Aapka yeh naya live frontend domain yahan hona chahiye!
+  'https://zohobooks-amber.vercel.app' // Aapka live frontend domain
 ];
 
+// FIXED: Duplicate block ko hata kar sirf ek baar clean CORS setup kiya hai
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
-    },
-    credentials: true
-}));
-
-
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
+        // Allow requests with no origin (like mobile apps or server-to-server)
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
             const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
@@ -48,7 +35,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Console Logger setup taaki terminal me path dikhe
+// Console Logger setup taaki incoming requests live terminal me dikhein
 app.use((req, res, next) => {
     console.log(`📡 [${new Date().toLocaleTimeString()}] ${req.method} request received at: ${req.url}`);
     next();
