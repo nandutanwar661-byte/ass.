@@ -4,25 +4,35 @@ const CustomerList = ({ onAddNewCustomerClick, onEditCustomerClick, refreshTrigg
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
- const fetchCustomers = async () => {
+  const fetchCustomers = async () => {
   try {
-    setLoading(true); // Fetch shuru hone par loading true karein
+    setLoading(true);
     
-    // Sahi URL jisme /all juda hua hai
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
-    const res = await fetch(`${baseUrl}/api/customers/all`); // 👈 Yahan /all lagaya hai
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-9y1a.onrender.com';
+    
+    // 1. Response ko 'res' variable me store kiya
+    const res = await fetch(`${baseUrl}/api/customers/all`); 
 
-    const data = await res.json();
+    // 2. Pehle check karein ki response ok hai ya nahi
+    if (!res.ok) {
+      throw new Error(`Server returned status: ${res.status}`);
+    }
+
+    // 3. 'res' variable se hi json() data nikala
+    const data = await res.json(); 
     
-    // Agar data array ke roop me seedhe mil raha hai toh set karein
-    setCustomers(data);
+    // 4. Data check karke state me save kiya
+    if (Array.isArray(data)) {
+      setCustomers(data);
+    } else if (data && Array.isArray(data.data)) {
+      setCustomers(data.data);
+    }
   } catch (err) {
     console.error("Error fetching customers:", err);
   } finally {
     setLoading(false);
   }
 };
-
   useEffect(() => {
     fetchCustomers();
   }, [refreshTrigger]);
