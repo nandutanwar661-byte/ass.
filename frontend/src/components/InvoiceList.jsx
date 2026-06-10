@@ -8,7 +8,7 @@ const InvoiceList = ({ onAddNewClick, onEditClick, refreshTrigger }) => {
 
   useEffect(() => {
     // Localhost backend API endpoint
-    fetch(' https://ass-1-saa5.onrender.com/api/invoices/all')
+    fetch(' https://ass-1-9y1a.onrender.com/api/invoices/all')
       .then(res => res.json())
       .then(resData => { if (resData.success) setInvoices(resData.data); })
       .catch(err => console.error(err))
