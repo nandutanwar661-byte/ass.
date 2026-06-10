@@ -20,16 +20,9 @@ const allowedOrigins = [
 ];
 
 // FIXED: Duplicate block ko hata kar sirf ek baar clean CORS setup kiya hai
+// Strict origin check hata kar ise open kar dein (SABSE BEST TARIKA)
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or server-to-server)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
-    },
+    origin: true, 
     credentials: true
 }));
 
