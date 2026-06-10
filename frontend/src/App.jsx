@@ -32,7 +32,7 @@ function App() {
   const fetchDashboardData = async () => {
     try {
       // Localhost link ko hatakar live Render URL laga diya hai
-      const res = await fetch(' https://ass-1-saa5.onrender.com/api/customers/dashboard-summary');
+      const res = await fetch(' https://ass-1-9y1a.onrender.com/api/customers/dashboard-summary');
       const data = await res.json();
       setSummary(data);
     } catch (err) {
