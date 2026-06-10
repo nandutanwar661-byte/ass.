@@ -14,7 +14,25 @@ connectDB();
 const allowedOrigins = [
   'http://localhost:5173', 
   'http://localhost:3000',
-  'https://your-vercel-project-name.vercel.app' // 👈 Apne actual Vercel domain ko yahan copy-paste karein
+  '// Server.js me allowedOrigins array ko aise update karein:
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:3000',
+  'https://zohobooks-amber.vercel.app' // 👈 Aapka yeh naya live frontend domain yahan hona chahiye!
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true
+}));' // 👈 Apne actual Vercel domain ko yahan copy-paste karein
 ];
 
 
