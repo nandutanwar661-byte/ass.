@@ -5,7 +5,7 @@ const Invoice = require('../models/Invoice'); // Apne model ka sahi path check k
 
 // Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  // service: 'gmail',
   host: 'smtp.gmail.com',
   port: 587,           // 👈 465 ko hata kar 587 likhiye
   secure: false,       // 👈 Isko false kariye kyunki 587 TLS use karta h, SSL nahi
