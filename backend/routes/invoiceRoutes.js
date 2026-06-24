@@ -1,11 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 const Invoice = require('../models/Invoice'); 
 
-// ✅ Initialize Resend with your API Key (Bypasses Render SMTP ports completely!)
-// ⚠️ Yahan apni Resend Dashboard se mili hui 're_...' wali API key paste kijiye!
-const resend = new Resend('re_19ef8154c7c_your_actual_key_here'); 
+// ✅ STRICT GMAIL DIRECT WEBSERVICE PIPELINE (Bypasses standard SMTP blocks)
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Strict SSL encryption channel
+  auth: {
+    user: "nandutanwar661@gmail.com", // Aapki asli Gmail ID
+    pass: "xoemvfpqrovhnyyg"          // Aapka 16-digit Google App Password जो आपने बनाया है
+  },
+  tls: {
+    rejectUnauthorized: false // Render network protocol verification bypass
+  }
+});
 
 // 1. GET ALL INVOICES ROUTE
 router.get('/all', async (req, res) => {
@@ -17,10 +28,10 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// 2. 🔥 MAIN LIVE EMAIL ROUTE (Uses HTTP/HTTPS API)
+// 2. 🔥 MAIN DIRECT GMAIL TRANSMISSION ROUTE
 router.post('/send-email', async (req, res) => {
   const { invoiceIds } = req.body;
-  console.log("📡 Resend API request received for IDs:", invoiceIds);
+  console.log("📡 Direct Gmail send request triggered for IDs:", invoiceIds);
 
   try {
     if (!invoiceIds || invoiceIds.length === 0) {
@@ -30,12 +41,12 @@ router.post('/send-email', async (req, res) => {
     const selectedInvoices = await Invoice.find({ _id: { $in: invoiceIds } });
 
     for (const invoice of selectedInvoices) {
-      // Resend Free testing tier par email seedhe aapki registered main ID par jayegi
+      // 🚀 Aapko Mailtrap par nahi chahiye, isliye target direct aapki Gmail hi rahegi!
       const targetEmail = 'nandutanwar661@gmail.com'; 
 
-      await resend.emails.send({
-        from: 'Suits Workspaces <onboarding@resend.dev>', // Default Resend verified domain
-        to: targetEmail,                                  // 🚀 Direct to your real Gmail inbox
+      const mailOptions = {
+        from: '"Suits Workspaces" <nandutanwar661@gmail.com>', // Sender details
+        to: targetEmail,                                     // 📬 Delivered straight to your Gmail Inbox
         subject: `Tax Invoice ${invoice.invoiceNumber} From Suits Workspaces`,
         html: `
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
@@ -47,13 +58,16 @@ router.post('/send-email', async (req, res) => {
             <p>Thank you for your business!</p>
           </div>
         `
-      });
+      };
+
+      // Direct native transmission
+      await transporter.sendMail(mailOptions);
     }
 
-    return res.status(200).json({ success: true, message: "Real Emails sent directly to Gmail Inbox!" });
+    return res.status(200).json({ success: true, message: "Emails pushed directly to your real Gmail Inbox!" });
 
   } catch (error) {
-    console.error("Resend API Error:", error);
+    console.error("Direct Gmail Transport Error:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 });
