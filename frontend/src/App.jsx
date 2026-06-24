@@ -28,22 +28,14 @@ function App() {
 
   const [summary, setSummary] = useState({ totalReceivables: 0, totalPayables: 0 });
 
-  // 1. Centralized Email Sending Function
+  // Centralized Email Sending Function
   const sendInvoiceEmail = async (clientEmail, clientName, pdfFileName) => {
     try {
-      // Aapke Render server ka link laga diya hai
       const res = await fetch('https://ass-1-9y1a.onrender.com/api/send-invoice', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          clientEmail,
-          clientName,
-          pdfFileName // Backend ko batane ke liye ki kaunsa file attachment mein bhejna hai
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientEmail, clientName, pdfFileName }),
       });
-
       const data = await res.json();
       if (data.success) {
         alert('🎉 Invoice successfully email par bhej diya gaya hai!');
@@ -71,14 +63,13 @@ function App() {
     if (activePage === 'new-items') setIsAddingItem(true);
     else if (activePage === 'items') setIsAddingItem(false);
     
-    if (activePage === 'estimates') setIsAddingEstimate(false);
-    
-    if (activePage === 'invoices') {
+    // Manage sidebar navigation overrides safely
+    if (activePage === 'estimates' && !isAddingEstimate) setIsAddingEstimate(false);
+    if (activePage === 'invoices' && !isAddingInvoice && !selectedEditInvoice) {
       setIsAddingInvoice(false);
       setSelectedEditInvoice(null);
     }
-
-    if (activePage === 'customers') {
+    if (activePage === 'customers' && !isAddingCustomer && !selectedEditCustomer) {
       setIsAddingCustomer(false);
       setSelectedEditCustomer(null);
     }
@@ -86,7 +77,16 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen bg-slate-50 font-sans overflow-hidden">
-      <Navbar /> 
+      {/* 🟢 Navbar ko saare state triggers pass kar diye taaki drop-down control ho sake */}
+      <Navbar 
+        setActivePage={setActivePage}
+        setIsAddingCustomer={setIsAddingCustomer}
+        setSelectedEditCustomer={setSelectedEditCustomer}
+        setIsAddingInvoice={setIsAddingInvoice}
+        setSelectedEditInvoice={setSelectedEditInvoice}
+        setIsAddingItem={setIsAddingItem}
+        setIsAddingEstimate={setIsAddingEstimate}
+      /> 
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar setActivePage={setActivePage} activePage={activePage} />
@@ -160,7 +160,6 @@ function App() {
                   }}
                 />
               ) : (
-                // 2. InvoiceList ke andar function ko as a prop pass kar diya hai
                 <InvoiceList 
                   refreshTrigger={invoiceRefreshKey}
                   onAddNewClick={() => {
@@ -170,7 +169,7 @@ function App() {
                   onEditClick={(targetInvoiceProfileToEdit) => {
                     setSelectedEditInvoice(targetInvoiceProfileToEdit);
                   }}
-                  onSendEmailClick={sendInvoiceEmail} // <-- Ye prop ab InvoiceList mein available hai
+                  onSendEmailClick={sendInvoiceEmail}
                 />
               )}
             </div>
