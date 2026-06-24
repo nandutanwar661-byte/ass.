@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
   port: 2525,                            // 👈 Port 2525 kar dijiye
   auth: {
     user: "b1172371cab9a1",              // 👈 Apna Username yahan copy-paste kariye
-    pass: "b7bc8b4461b6e1"               // 👈 Password copy karke yahan paste kariye
+    pass: "2cca7fd110b6e1"               // 👈 Password copy karke yahan paste kariye
   }
 });
 
