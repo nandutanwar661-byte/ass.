@@ -6,8 +6,7 @@ const EstimateDetailsView = ({ onAddNewClick, onEditClick, refreshTrigger }) => 
 
   useEffect(() => {
     // Sahi Tarika: URL ko template literal me environment variable ke sath set kiya
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
-    
+const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-9y1a.onrender.com';    
     fetch(`${baseUrl}/api/estimates/all`)
       .then(res => res.json())
       .then(result => { 

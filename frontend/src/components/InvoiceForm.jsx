@@ -27,7 +27,7 @@ const InvoiceForm = ({ onInvoiceSaved, onCancel, editData }) => {
   const [showPDFSection, setShowPDFSection] = useState(false);
 
   useEffect(() => {
-    fetch(' https://ass-1-saa5.onrender.com/api/customers/all')
+    fetch(' https://ass-1-9y1a.onrender.com/api/customers/all')
       .then(res => res.json())
       .then(data => setCustomers(data))
       .catch(err => console.error(err));
@@ -65,8 +65,8 @@ const InvoiceForm = ({ onInvoiceSaved, onCancel, editData }) => {
     const payload = { ...meta, items: tableItems, subTotal, total: totalAmount };
     
     const url = editData 
-      ? ` https://ass-1-saa5.onrender.com/api/invoices/${editData._id}`
-      : ' https://ass-1-saa5.onrender.com/api/invoices/add';
+      ? ` https://ass-1-9y1a.onrender.com/api/invoices/${editData._id}`
+      : ' https://ass-1-9y1a.onrender.com/api/invoices/add';
     const method = editData ? 'PUT' : 'POST';
 
     try {

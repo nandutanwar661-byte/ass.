@@ -233,7 +233,7 @@ const Dashboard = ({ summary = {} }) => {
               </div>
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <div className="w-[160px] h-[160px] shrink-0">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="300%">
                     <PieChart>
                       <Pie data={pieData} cx="50%" cy="50%" innerRadius={0} outerRadius={70} dataKey="value">
                         {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}

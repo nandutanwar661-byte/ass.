@@ -90,30 +90,48 @@ const EstimateInvoiceForm = ({ refreshDashboard, editData, onCancelEdit }) => {
 const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const finalPayload = { ...formData, items };
+      // 1. FormData ka object banayein kyunki backend me Multer laga hai
+      const dataToSend = new FormData();
       
-      // FIXED: Aapki exact Render link ko default fallback banaya
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
+      // 2. Poore formData fields ko loop karke append karein
+      Object.keys(formData).forEach(key => {
+        dataToSend.append(key, formData[key]);
+      });
       
-      // FIXED: Endpoint ke aakhiri me '/add' jod diya hai jo aapke backend route se match karta hai
+      // 3. Items array ko stringify karke bhein (backend ise JSON.parse karega)
+      dataToSend.append('items', JSON.stringify(items));
+
+      // Note: Agar aapke paas item ki image file state me hai (jaise imageFile), 
+      // toh aap use niche wali line un-comment karke bhej sakte hain:
+      // if (imageFile) dataToSend.append('itemImage', imageFile);
+
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-9y1a.onrender.com';
+      
       const response = await fetch(`${baseUrl}/api/estimates/add`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalPayload)
+        // IMPORTANT: FormData bhejte waqt 'Content-Type' header NAHI likhte hain
+        body: dataToSend 
       });
 
       const result = await response.json();
 
       if (response.ok && result.success) {
-        alert('🎉 Data saved successfully to your live server!');
-        if (refreshDashboard) refreshDashboard();
-        if (onCancelEdit) onCancelEdit(); // form close karne ke liye
+        alert('🎉 Estimate Live Server par successfully save ho gaya!');
+        
+        // Data turant screen par dikhe isliye reload ya refresh handler trigger karein
+        if (refreshDashboard) {
+          refreshDashboard();
+        } else {
+          window.location.reload(); // Fallback reload
+        }
+        
+        if (onCancelEdit) onCancelEdit();
       } else {
-        alert(`⚠️ Error: ${result.message || 'Failed to save data.'}`);
+        alert(`⚠️ Error: ${result.message || 'Data save nahi ho paya.'}`);
       }
     } catch (error) {
       console.error("API Connection Error:", error);
-      alert('Could not connect to the live server.');
+      alert('⚠️ Live server se connect nahi ho pa rha hai.');
     }
   };
 

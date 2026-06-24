@@ -65,7 +65,7 @@ const CustomerForm = ({ refreshDashboard, editCustomerData, onCancelEdit }) => {
     const isEditing = !!editCustomerData;
     
     // सही तरीका: Environment Variable का उपयोग करके यूआरएल बनाना
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-saa5.onrender.com';
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://ass-1-9y1a.onrender.com';
     
     const url = isEditing
       ? `${baseUrl}/api/customers/${editCustomerData._id}`

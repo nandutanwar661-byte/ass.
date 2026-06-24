@@ -9,15 +9,14 @@ import ItemDetailsView from './components/ItemDetailsView';
 import Banking from './components/Banking';
 import EstimateForm from './components/EstimateForm';
 import EstimateDetailsView from './components/EstimateDetailsView';
-import InvoiceForm from './components/InvoiceForm'; // <-- Linked Invoice Entry Sheet
-import InvoiceList from './components/InvoiceList'; // <-- Linked Invoice Details Ledger Viewer
+import InvoiceForm from './components/InvoiceForm'; 
+import InvoiceList from './components/InvoiceList'; 
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard');
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [isAddingEstimate, setIsAddingEstimate] = useState(false);
   
-  // Invoice state controls toggles configurations parameters cachers keys
   const [isAddingInvoice, setIsAddingInvoice] = useState(false);
   const [selectedEditInvoice, setSelectedEditInvoice] = useState(null);
   const [invoiceRefreshKey, setInvoiceRefreshKey] = useState(0);
@@ -29,10 +28,37 @@ function App() {
 
   const [summary, setSummary] = useState({ totalReceivables: 0, totalPayables: 0 });
 
+  // 1. Centralized Email Sending Function
+  const sendInvoiceEmail = async (clientEmail, clientName, pdfFileName) => {
+    try {
+      // Aapke Render server ka link laga diya hai
+      const res = await fetch('https://ass-1-9y1a.onrender.com/api/send-invoice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          clientEmail,
+          clientName,
+          pdfFileName // Backend ko batane ke liye ki kaunsa file attachment mein bhejna hai
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert('🎉 Invoice successfully email par bhej diya gaya hai!');
+      } else {
+        alert('❌ Email nahi bheja ja saka: ' + data.message);
+      }
+    } catch (err) {
+      console.error("Error sending email:", err);
+      alert('❌ Server se connect karne mein issue aa raha hai.');
+    }
+  };
+
   const fetchDashboardData = async () => {
     try {
-      // Localhost link ko hatakar live Render URL laga diya hai
-      const res = await fetch(' https://ass-1-saa5.onrender.com/api/customers/dashboard-summary');
+      const res = await fetch('https://ass-1-9y1a.onrender.com/api/customers/dashboard-summary');
       const data = await res.json();
       setSummary(data);
     } catch (err) {
@@ -47,7 +73,6 @@ function App() {
     
     if (activePage === 'estimates') setIsAddingEstimate(false);
     
-    // Reset invoice router targets when tracking transitions
     if (activePage === 'invoices') {
       setIsAddingInvoice(false);
       setSelectedEditInvoice(null);
@@ -117,11 +142,10 @@ function App() {
             </div>
           )}
 
-          {/* 4. Invoices Complete Split Framework View Configuration */}
+          {/* Invoices Section */}
           {activePage === 'invoices' && (
             <div className="space-y-6">
               {isAddingInvoice || selectedEditInvoice ? (
-                // Full Single screen Sheet Entry Box Form Layout View
                 <InvoiceForm 
                   editData={selectedEditInvoice}
                   onInvoiceSaved={() => {
@@ -136,7 +160,7 @@ function App() {
                   }}
                 />
               ) : (
-                // Full single screen profiles lists reporting summary tables views ledger
+                // 2. InvoiceList ke andar function ko as a prop pass kar diya hai
                 <InvoiceList 
                   refreshTrigger={invoiceRefreshKey}
                   onAddNewClick={() => {
@@ -146,6 +170,7 @@ function App() {
                   onEditClick={(targetInvoiceProfileToEdit) => {
                     setSelectedEditInvoice(targetInvoiceProfileToEdit);
                   }}
+                  onSendEmailClick={sendInvoiceEmail} // <-- Ye prop ab InvoiceList mein available hai
                 />
               )}
             </div>
