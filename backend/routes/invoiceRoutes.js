@@ -4,7 +4,8 @@ const { Resend } = require('resend');
 const Invoice = require('../models/Invoice'); 
 
 // ✅ Initialize Resend with your API Key (Bypasses Render SMTP ports completely!)
-const resend = new Resend('PASTE_YOUR_RESEND_API_KEY_HERE');
+// ⚠️ Yahan apni Resend Dashboard se mili hui 're_...' wali API key paste kijiye!
+const resend = new Resend('re_19ef8154c7c_your_actual_key_here'); 
 
 // 1. GET ALL INVOICES ROUTE
 router.get('/all', async (req, res) => {
@@ -29,12 +30,12 @@ router.post('/send-email', async (req, res) => {
     const selectedInvoices = await Invoice.find({ _id: { $in: invoiceIds } });
 
     for (const invoice of selectedInvoices) {
-      // Free testing tiers on Resend deliver directly to your registered account email
+      // Resend Free testing tier par email seedhe aapki registered main ID par jayegi
       const targetEmail = 'nandutanwar661@gmail.com'; 
 
       await resend.emails.send({
-        from: 'Suits Workspaces <onboarding@resend.dev>', // Resend free tier default verified sender
-        to: targetEmail,                                  // 🚀 Deliver directly to your real Gmail inbox
+        from: 'Suits Workspaces <onboarding@resend.dev>', // Default Resend verified domain
+        to: targetEmail,                                  // 🚀 Direct to your real Gmail inbox
         subject: `Tax Invoice ${invoice.invoiceNumber} From Suits Workspaces`,
         html: `
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
