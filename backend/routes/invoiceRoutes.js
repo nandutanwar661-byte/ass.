@@ -5,22 +5,12 @@ const Invoice = require('../models/Invoice'); // Apne model ka sahi path check k
 
 // Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
-  // Google ke standard domain ki jagah hum direct fallback IP standard use karenge
-  host: '74.125.142.108', // 👈 'smtp.gmail.com' ko hata kar yeh exact IP likhiye
-  port: 587,
-  secure: false,
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525, // Render does not block port 2525!
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    // Cloud environments mein certificates verify karne ke liye strict validation bypass
-    rejectUnauthorized: false,
-    minVersion: 'TLSv1.2'
-  },
-  connectionTimeout: 20000, // Timeout limits ko 20 seconds tak badha diya hai
-  greetingTimeout: 20000,
-  family: 4
+    user: "YOUR_MAILTRAP_USERNAME", // Paste from Mailtrap
+    pass: "YOUR_MAILTRAP_PASSWORD"  // Paste from Mailtrap
+  }
 });
 
 // 1. GET ALL INVOICES ROUTE
