@@ -4,13 +4,22 @@ const nodemailer = require('nodemailer');
 const Invoice = require('../models/Invoice'); // Apne model ka sahi path check kar lein
 
 // Nodemailer Transporter Setup
+// ✅ Tarika 1: Direct String Setup
 const transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",      // 👈 Yeh exact likhiye
-  port: 2525,                            // 👈 Port 2525 kar dijiye
+  host: '74.125.142.108', 
+  port: 587,              
+  secure: false,          
   auth: {
-    user: "b1172371cab9a1",              // 👈 Apna Username yahan copy-paste kariye
-    pass: "2cca7fd110b6e1"               // 👈 Password copy karke yahan paste kariye
-  }
+    user: "nandutanwar661@gmail.com", // 👈 Bilkul aise double quotes (" ") ke andar likhiye
+    pass: "xoemvfpqrovhnyyg"          // 👈 16-digit App password bhi quotes ke andar bina space ke
+  },
+  tls: {
+    rejectUnauthorized: false,    
+    minVersion: 'TLSv1.2'
+  },
+  connectionTimeout: 15000,
+  greetingTimeout: 15000,
+  family: 4                       
 });
 
 // 1. GET ALL INVOICES ROUTE
