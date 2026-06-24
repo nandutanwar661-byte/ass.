@@ -1,16 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
-const Invoice = require('../models/Invoice'); // Apne model ka sahi path check kar lein
+const { Resend } = require('resend');
+const Invoice = require('../models/Invoice'); 
 
-// Nodemailer Transporter Setup
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+// ✅ Initialize Resend with your API Key (Bypasses Render SMTP ports completely!)
+const resend = new Resend('PASTE_YOUR_RESEND_API_KEY_HERE');
 
 // 1. GET ALL INVOICES ROUTE
 router.get('/all', async (req, res) => {
@@ -22,10 +16,10 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// 2. 🔥 MAIN EMAIL ROUTE (Ise ensure karein)
+// 2. 🔥 MAIN LIVE EMAIL ROUTE (Uses HTTP/HTTPS API)
 router.post('/send-email', async (req, res) => {
   const { invoiceIds } = req.body;
-  console.log("📡 Mail request received for IDs:", invoiceIds);
+  console.log("📡 Resend API request received for IDs:", invoiceIds);
 
   try {
     if (!invoiceIds || invoiceIds.length === 0) {
@@ -35,12 +29,12 @@ router.post('/send-email', async (req, res) => {
     const selectedInvoices = await Invoice.find({ _id: { $in: invoiceIds } });
 
     for (const invoice of selectedInvoices) {
-      // Schema ke according field check karein (customerEmail ya email)
-      const customerEmail = invoice.customerEmail || invoice.email || 'test-customer@gmail.com'; 
+      // Free testing tiers on Resend deliver directly to your registered account email
+      const targetEmail = 'nandutanwar661@gmail.com'; 
 
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: customerEmail,
+      await resend.emails.send({
+        from: 'Suits Workspaces <onboarding@resend.dev>', // Resend free tier default verified sender
+        to: targetEmail,                                  // 🚀 Deliver directly to your real Gmail inbox
         subject: `Tax Invoice ${invoice.invoiceNumber} From Suits Workspaces`,
         html: `
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
@@ -52,16 +46,13 @@ router.post('/send-email', async (req, res) => {
             <p>Thank you for your business!</p>
           </div>
         `
-      };
-
-      await transporter.sendMail(mailOptions);
+      });
     }
 
-    // Frontend ko response bhejna zaroori h
-    return res.status(200).json({ success: true, message: "Emails sent successfully!" });
+    return res.status(200).json({ success: true, message: "Real Emails sent directly to Gmail Inbox!" });
 
   } catch (error) {
-    console.error("Nodemailer Error:", error);
+    console.error("Resend API Error:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 });
