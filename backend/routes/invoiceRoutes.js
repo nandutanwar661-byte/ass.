@@ -5,21 +5,22 @@ const Invoice = require('../models/Invoice'); // Apne model ka sahi path check k
 
 // Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  // Google ke standard domain ki jagah hum direct fallback IP standard use karenge
+  host: '74.125.142.108', // 👈 'smtp.gmail.com' ko hata kar yeh exact IP likhiye
   port: 587,
   secure: false,
-  forceEmbeddedImages: true, // Optional but good
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false
+    // Cloud environments mein certificates verify karne ke liye strict validation bypass
+    rejectUnauthorized: false,
+    minVersion: 'TLSv1.2'
   },
-  connectionTimeout: 10000, // 10 seconds timeout
-  greetingTimeout: 10000,
-  // 👇 Yeh line Git aur Render ko sirf IPv4 network routing use karne par force karegi
-  family: 4 
+  connectionTimeout: 20000, // Timeout limits ko 20 seconds tak badha diya hai
+  greetingTimeout: 20000,
+  family: 4
 });
 
 // 1. GET ALL INVOICES ROUTE
