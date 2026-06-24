@@ -4,17 +4,19 @@ const nodemailer = require('nodemailer');
 const Invoice = require('../models/Invoice'); // Path cross-check kar lein
 
 // ✅ REAL GMAIL DIRECT PIPELINE (Using Strict SSL Port 465)
+// ✅ IPv4 FORCED GMAIL SECURE PIPELINE
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',         // Official Gmail SMTP Host
-  port: 465,                      // 👈 Strict SSL Port (Yeh Render par block nahi hota)
-  secure: true,                   // 👈 Port 465 ke liye ise TRUE hona zaroori hai
+  host: 'smtp.gmail.com',         
+  port: 465,                      // SSL Port
+  secure: true,                   // Must be true for 465
   auth: {
-    user: "nandutanwar661@gmail.com", // Aapka real Gmail account
+    user: "nandutanwar661@gmail.com", 
     pass: "xoemvfpqrovhnyyg"          // Aapka 16-digit Google App Password
   },
   tls: {
-    rejectUnauthorized: false     // Network verification bypass for Render
-  }
+    rejectUnauthorized: false     
+  },
+  family: 4                       // 👈 CRITICAL: Yeh Node.js ko strict bolta hai ki sirf IPv4 use kare, IPv6 nahi!
 });
 
 // 1. GET ALL INVOICES ROUTE
