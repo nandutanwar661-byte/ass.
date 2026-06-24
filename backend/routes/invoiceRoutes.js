@@ -5,12 +5,17 @@ const Invoice = require('../models/Invoice'); // Apne model ka sahi path check k
 
 // Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525, // Is port ko Render block nahi karta!
+  host: '74.125.142.108', // Gmail Official direct IP
+  port: 465,              // 👈 Hum port badal kar 465 (SSL) secure use karenge, ise block nahi kiya jata!
+  secure: true,           // 👈 Ise TRUE kariye kyunki port 465 strict SSL demand karta hai
   auth: {
-    user: "b1172371cab9a1",  // Aapka Mailtrap username
-    pass: "2cca7fd110b6e1"   // Aapka Mailtrap password (stars bina wala asli text)
-  }
+    user: "nandutanwar661@gmail.com", 
+    pass: "xoemvfpqrovhnyyg"          // Aapka 16-digit Google App Password
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  family: 4
 });
 
 // 1. GET ALL INVOICES ROUTE
