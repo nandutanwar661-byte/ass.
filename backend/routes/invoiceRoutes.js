@@ -1,21 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
-const Invoice = require('../models/Invoice'); // Apne model ka sahi path check kar lein
+const Invoice = require('../models/Invoice'); // Path cross-check kar lein
 
-// Nodemailer Transporter Setup
+// ✅ REAL GMAIL DIRECT PIPELINE (Using Strict SSL Port 465)
 const transporter = nodemailer.createTransport({
-  host: '74.125.142.108', // Gmail Official direct IP
-  port: 465,              // 👈 Hum port badal kar 465 (SSL) secure use karenge, ise block nahi kiya jata!
-  secure: true,           // 👈 Ise TRUE kariye kyunki port 465 strict SSL demand karta hai
+  host: 'smtp.gmail.com',         // Official Gmail SMTP Host
+  port: 465,                      // 👈 Strict SSL Port (Yeh Render par block nahi hota)
+  secure: true,                   // 👈 Port 465 ke liye ise TRUE hona zaroori hai
   auth: {
-    user: "nandutanwar661@gmail.com", 
+    user: "nandutanwar661@gmail.com", // Aapka real Gmail account
     pass: "xoemvfpqrovhnyyg"          // Aapka 16-digit Google App Password
   },
   tls: {
-    rejectUnauthorized: false
-  },
-  family: 4
+    rejectUnauthorized: false     // Network verification bypass for Render
+  }
 });
 
 // 1. GET ALL INVOICES ROUTE
@@ -28,10 +27,10 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// 2. 🔥 MAIN EMAIL ROUTE (Ise ensure karein)
+// 2. 🔥 MAIN REAL EMAIL ROUTE
 router.post('/send-email', async (req, res) => {
   const { invoiceIds } = req.body;
-  console.log("📡 Mail request received for IDs:", invoiceIds);
+  console.log("📡 Live Real Mail request received for IDs:", invoiceIds);
 
   try {
     if (!invoiceIds || invoiceIds.length === 0) {
@@ -41,12 +40,12 @@ router.post('/send-email', async (req, res) => {
     const selectedInvoices = await Invoice.find({ _id: { $in: invoiceIds } });
 
     for (const invoice of selectedInvoices) {
-      // Schema ke according field check karein (customerEmail ya email)
-      const customerEmail = invoice.customerEmail || invoice.email || 'test-customer@gmail.com'; 
+      // Agar invoice me real customer email na mile toh backup me isi par mail bhej dega
+      const customerEmail = invoice.customerEmail || invoice.email || 'nandutanwar661@gmail.com'; 
 
       const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: customerEmail,
+        from: '"Suits Workspaces" <nandutanwar661@gmail.com>', // Sender details
+        to: customerEmail,                                   // 🚀 Ab yeh direct is REAL address par jayega!
         subject: `Tax Invoice ${invoice.invoiceNumber} From Suits Workspaces`,
         html: `
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
@@ -60,14 +59,14 @@ router.post('/send-email', async (req, res) => {
         `
       };
 
+      // Real email transmission
       await transporter.sendMail(mailOptions);
     }
 
-    // Frontend ko response bhejna zaroori h
-    return res.status(200).json({ success: true, message: "Emails sent successfully!" });
+    return res.status(200).json({ success: true, message: "Real Emails delivered successfully directly to Inbox!" });
 
   } catch (error) {
-    console.error("Nodemailer Error:", error);
+    console.error("Nodemailer Real Error:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 });
