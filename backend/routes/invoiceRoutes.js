@@ -5,11 +5,11 @@ const Invoice = require('../models/Invoice'); // Apne model ka sahi path check k
 
 // Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525, // Render does not block port 2525!
+  host: "sandbox.smtp.mailtrap.io",      // 👈 Yeh exact likhiye
+  port: 2525,                            // 👈 Port 2525 kar dijiye
   auth: {
-    user: "YOUR_MAILTRAP_USERNAME", // Paste from Mailtrap
-    pass: "YOUR_MAILTRAP_PASSWORD"  // Paste from Mailtrap
+    user: "b1172371cab9a1",              // 👈 Apna Username yahan copy-paste kariye
+    pass: "b7bc8b4461b6e1"               // 👈 Password copy karke yahan paste kariye
   }
 });
 
